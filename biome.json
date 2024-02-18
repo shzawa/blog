@@ -6,11 +6,20 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "nursery": {
+        "noUnusedImports": "error"
+      }
     }
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space"
+  },
+  "javascript": {
+    "formatter": {
+      "enabled": true,
+      "semicolons": "asNeeded"
+    }
   }
 }

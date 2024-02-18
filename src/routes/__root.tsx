@@ -1,8 +1,37 @@
-import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
+import { QueryClient } from "@tanstack/react-query"
+import {
+  Link,
+  Outlet,
+  createRootRouteWithContext,
+} from "@tanstack/react-router"
+import { Suspense, lazy } from "react"
 
-export const Route = createRootRoute({
+const TanStackRouterDevtools =
+  process.env.NODE_ENV === "production"
+    ? () => null // Render nothing in production
+    : lazy(() =>
+        // Lazy load in development
+        import("@tanstack/router-devtools").then((res) => ({
+          default: res.TanStackRouterDevtools,
+          // For Embedded Mode
+          // default: res.TanStackRouterDevtoolsPanel
+        })),
+      )
+
+const ReactQueryDevtools =
+  process.env.NODE_ENV === "production"
+    ? () => null
+    : lazy(() =>
+        import("@tanstack/react-query-devtools").then((res) => ({
+          default: res.ReactQueryDevtools,
+        })),
+      )
+
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient
+}>()({
   component: Component,
-});
+})
 
 function Component() {
   return (
@@ -13,10 +42,19 @@ function Component() {
         </Link>{" "}
         <Link to="/about" className="[&.active]:font-bold">
           About
+        </Link>{" "}
+        <Link to="/posts" className="[&.active]:font-bold">
+          Posts
         </Link>
       </div>
       <hr />
       <Outlet />
+      <Suspense>
+        <TanStackRouterDevtools />
+      </Suspense>
+      <Suspense>
+        <ReactQueryDevtools />
+      </Suspense>
     </>
-  );
+  )
 }

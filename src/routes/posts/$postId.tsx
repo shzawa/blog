@@ -54,8 +54,6 @@ function PostErrorComponent({ error }: ErrorComponentProps) {
 function PostComponent() {
   const post = Route.useLoaderData()
 
-  console.log("asdasda")
-
   return (
     <div className="space-y-2">
       <h4 className="text-xl font-bold underline">{post.title}</h4>

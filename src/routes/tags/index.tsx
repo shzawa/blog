@@ -24,7 +24,7 @@ export const Route = createFileRoute("/tags/")({
     queryClient.ensureQueryData(tagsQueryOptions),
 })
 
-function TagsComponent() {
+export function TagsComponent() {
   const { data } = useSuspenseQuery(tagsQueryOptions)
 
   return (

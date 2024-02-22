@@ -9,7 +9,7 @@ import tsconfigPaths from "vite-tsconfig-paths"
 
 const config: PlaywrightTestConfig = {
   testDir: "./",
-  testMatch: ["**/*.pw-ct.tsx"],
+  testMatch: ["**/*.playwright.tsx"],
   /* The base directory, relative to the config file, for snapshot files created with toMatchSnapshot and toHaveScreenshot. */
   snapshotDir: "./__snapshots__",
   /* Maximum time one test can run for. */

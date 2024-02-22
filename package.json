@@ -7,8 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test-ct": "playwright test -c playwright-ct.config.ts",
-    "test-ct:ui": "playwright test -c playwright-ct.config.ts --ui",
+    "component-test": "playwright test -c playwright-ct.config.ts",
+    "component-test:dev": "rm -rf ./playwright/.cache && playwright test -c playwright-ct.config.ts --ui",
     "update-types": "supabase gen types typescript --project-id \"$PROJECT_REF\" > src/schema.ts"
   },
   "dependencies": {

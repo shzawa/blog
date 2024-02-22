@@ -21,7 +21,6 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "explorer.sortOrder": "mixed",
   "cSpell.words": ["supabase"],
   "typescript.locale": "en"
 }

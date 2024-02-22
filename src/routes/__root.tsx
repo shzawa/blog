@@ -28,6 +28,9 @@ function Component() {
         <Link to="/tags" className="[&.active]:font-bold">
           Tags
         </Link>
+        <Link to="/timeline" className="[&.active]:font-bold">
+          Timeline
+        </Link>
       </div>
       <hr />
       <Outlet />

@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "component-test": "playwright test -c playwright-ct.config.ts",
     "component-test:dev": "rm -rf ./playwright/.cache && playwright test -c playwright-ct.config.ts --ui",
-    "update-types": "supabase gen types typescript --project-id \"$PROJECT_REF\" > src/schema.ts"
+    "update-types": "supabase gen types typescript --project-id \"$PROJECT_REF\" > src/schema.ts",
+    "safetest": "OPT_URL='http://localhost:5173/' vitest --config vitest.safetest.config --poolOptions.threads.singleThread",
+    "safetest:ci": "rm -f artifacts.json && OPT_URL=${DEPLOYED_URL} OPT_CI=1 OPT_DOCKER=1 OPT_ARTIFACTS=artifacts.json npm run safetest -- --run --bail=5",
+    "safetest:regenerate-screenshots": "OPT_DOCKER=1 npm run safetest -- --run --update"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.7",
@@ -32,9 +35,11 @@
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
+    "safetest": "^0.1.11",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
     "vite": "^5.1.0",
-    "vite-tsconfig-paths": "^4.3.1"
+    "vite-tsconfig-paths": "^4.3.1",
+    "vitest": "^1.3.1"
   }
 }

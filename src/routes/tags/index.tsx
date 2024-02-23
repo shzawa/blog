@@ -1,6 +1,7 @@
 import { supabase } from "@/common"
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
+import { createOverride } from "safetest/react"
 
 export const Route = createFileRoute("/tags/")({
   component: TagsComponent,
@@ -57,7 +58,7 @@ export function TagsComponent() {
   )
 }
 
-const fetchTags = async () => {
+export const fetchTags = async () => {
   console.log("Fetching tags...")
   await new Promise((r) => setTimeout(r, 500))
   return supabase.from("tags").select(`
@@ -75,9 +76,14 @@ const fetchTags = async () => {
     `)
 }
 
+export const FetchTags = createOverride(fetchTags)
+
 const tagsQueryOptions = queryOptions({
   queryKey: ["tags"],
   queryFn: async () => {
+    // FIXME: 以下のエラーで怒られる。今時点だと safetest と tanstack/query は相性良くないっぽい
+    // Invalid hook call. Hooks can only be called inside of the body of a function component.
+    const fetchTags = FetchTags.useValue()
     const { data, error } = await fetchTags()
     // TODO: throw error で良い説？
     if (error) return Promise.reject(error)

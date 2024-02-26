@@ -10,17 +10,18 @@ export const Route = createFileRoute("/tags/")({
 })
 
 export function TagsComponent() {
-  // TODO: これだと safetest 
-  // const fetchHoge = FetchHoge.useValue()
-  // const data = useSuspenseQuery({
+  // FIXME: 以下のエラーで怒られる。今時点だと safetest と tanstack/query は相性良くないっぽい
+  // Invalid hook call. Hooks can only be called inside of the body of a function component.
+  // const fetchTags = FetchTags.useValue()
+  // const { data: tags } = useSuspenseQuery({
   //   queryKey: ["tags"],
   //   queryFn: async () => {
-  //     const { data, error } = await fetchHoge()
+  //     const { data, error } = await fetchTags()
   //     // TODO: throw error で良い説？
   //     if (error) return Promise.reject(error)
   //     return data
   //   },
-  // }) 
+  // })
   const { data: tags } = useSuspenseQuery(tagsQueryOptions)
 
   return (

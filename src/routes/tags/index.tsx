@@ -10,6 +10,17 @@ export const Route = createFileRoute("/tags/")({
 })
 
 export function TagsComponent() {
+  // TODO: これだと safetest 
+  // const fetchHoge = FetchHoge.useValue()
+  // const data = useSuspenseQuery({
+  //   queryKey: ["tags"],
+  //   queryFn: async () => {
+  //     const { data, error } = await fetchHoge()
+  //     // TODO: throw error で良い説？
+  //     if (error) return Promise.reject(error)
+  //     return data
+  //   },
+  // }) 
   const { data: tags } = useSuspenseQuery(tagsQueryOptions)
 
   return (
@@ -18,10 +29,14 @@ export function TagsComponent() {
         {tags.map((tag) => {
           return (
             <li key={tag.id} className="whitespace-nowrap">
-              {tag.name}
+              <p>{tag.name}</p>
               <ul className="list-disc pl-4">
                 {tag.articles.map((article) => {
-                  return <li key={article.id}>{article.title}</li>
+                  return (
+                    <li key={article.id}>
+                      <p>{article.title}</p>
+                    </li>
+                  )
                 })}
                 {tag.external_links.map((externalLink) => {
                   return (

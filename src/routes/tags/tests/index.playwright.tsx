@@ -1,14 +1,20 @@
-import { TagsComponent } from "@/routes/tags"
-import { expect, test } from "@playwright/experimental-ct-react"
-import { Wrapper } from "./test-utils"
+import { expect, test as _test } from "@playwright/experimental-ct-react"
+import type { MockServiceWorker } from "playwright-msw"
+import { createWorkerFixture } from "playwright-msw"
+import { Template } from "./index.template"
+const test = _test.extend<{ worker: MockServiceWorker }>({
+  worker: createWorkerFixture(),
+})
 
 // test.use({ viewport: { width: 500, height: 500 } })
 
-test("should work", async ({ mount }) => {
-  const component = await mount(
-    <Wrapper>
-      <TagsComponent />
-    </Wrapper>,
-  )
-  await expect(component).toContainText("Learn React")
+// const handlers = [http.get("")]
+
+test("should work", async ({ page, mount }) => {
+  // await worker.use(...handlers)
+
+  await mount(<Template />)
+  await expect(
+    page.getByRole("link", { name: "PostgreSQL 公式ドキュメンテーション" }),
+  ).toBeVisible()
 })

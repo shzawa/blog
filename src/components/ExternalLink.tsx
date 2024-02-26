@@ -2,17 +2,19 @@ import { ComponentPropsWithRef, forwardRef } from "react"
 
 export const ExternalLink = forwardRef<
   HTMLAnchorElement,
-  ComponentPropsWithRef<"a">
+  Omit<ComponentPropsWithRef<"a">, "className" | "rel" | "target">
 >(function ExternalLink({ children, ...props }, ref) {
   return (
     <a
       {...props}
       ref={ref}
       className="external-link underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+      rel="noopener noreferrer"
+      target="_blank"
     >
       {children}
       <svg
-        className="h-5 w-5 inline"
+        className="h-5 w-5 ml-1 inline"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

@@ -9,6 +9,17 @@ export const Route = createFileRoute("/tags/")({
 })
 
 export function TagsComponent() {
+  // TODO: これだと safetest 
+  // const fetchHoge = FetchHoge.useValue()
+  // const data = useSuspenseQuery({
+  //   queryKey: ["tags"],
+  //   queryFn: async () => {
+  //     const { data, error } = await fetchHoge()
+  //     // TODO: throw error で良い説？
+  //     if (error) return Promise.reject(error)
+  //     return data
+  //   },
+  // }) 
   const { data: tags } = useSuspenseQuery(tagsQueryOptions)
 
   return (

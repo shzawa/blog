@@ -17,10 +17,14 @@ export function TagsComponent() {
         {tags.map((tag) => {
           return (
             <li key={tag.id} className="whitespace-nowrap">
-              {tag.name}
+              <p>{tag.name}</p>
               <ul className="list-disc pl-4">
                 {tag.articles.map((article) => {
-                  return <li key={article.id}>{article.title}</li>
+                  return (
+                    <li key={article.id}>
+                      <p>{article.title}</p>
+                    </li>
+                  )
                 })}
                 {tag.external_links.map((externalLink) => {
                   return (

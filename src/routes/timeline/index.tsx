@@ -1,7 +1,7 @@
 import { supabase } from "@/common"
 import { ExternalLink, LinkIcon, NewspaperIcon } from "@/components"
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { Link, createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/timeline/")({
   component: TimelineComponent,
@@ -11,8 +11,6 @@ export const Route = createFileRoute("/timeline/")({
 
 export function TimelineComponent() {
   const { data: timeline } = useSuspenseQuery(timelineQueryOptions)
-
-  console.log(timeline)
 
   return (
     <>
@@ -29,7 +27,6 @@ export function TimelineComponent() {
                   className={`${!isLastItem ? "mb-10" : ""} ms-6`}
                 >
                   <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                    {/* heroicons link */}
                     <NewspaperIcon className="w-4 h-4 text-blue-800 dark:text-blue-300" />
                   </span>
                   <div className="flex items-start">
@@ -37,12 +34,17 @@ export function TimelineComponent() {
                       {entry.title}
                     </h3>
                     {entry.tags.map((tag) => (
-                      <span
+                      <Link
                         key={`entry-${entry.id}-tag-${tag.id}`}
-                        className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 ms-3"
+                        to="/tags/$tagId"
+                        params={{
+                          tagId: `${tag.id}`,
+                        }}
+                        activeProps={{ className: "text-black font-bold" }}
+                        className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2 py-0.5 ms-3 rounded dark:bg-blue-900 dark:text-blue-300 hover:underline"
                       >
                         {tag.name}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                   <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
@@ -68,12 +70,17 @@ export function TimelineComponent() {
                   <h3 className="flex items-center mb-1 text-lg font-semibold">
                     <ExternalLink href={entry.url}>{entry.title}</ExternalLink>
                     {entry.tags.map((tag) => (
-                      <span
+                      <Link
                         key={`entry-${entry.id}-tag-${tag.id}`}
-                        className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 ms-3"
+                        to="/tags/$tagId"
+                        params={{
+                          tagId: `${tag.id}`,
+                        }}
+                        activeProps={{ className: "text-black font-bold" }}
+                        className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2 py-0.5 ms-3 rounded dark:bg-blue-900 dark:text-blue-300 hover:underline"
                       >
                         {tag.name}
-                      </span>
+                      </Link>
                     ))}
                   </h3>
                   <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
@@ -83,9 +90,11 @@ export function TimelineComponent() {
                       weekday: "short",
                     })})`}
                   </time>
-                  <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
-                    {entry.description}
-                  </p>
+                  {entry.description !== null && (
+                    <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+                      {entry.description}
+                    </p>
+                  )}
                 </li>
               )
             }
@@ -123,45 +132,40 @@ const fetchTimeline = async () => {
   `)
 }
 
-const transformTimeline = (
-  data: NonNullable<Awaited<ReturnType<typeof fetchTimeline>>["data"]>,
-) => {
-  return data.reduce(
-    (acc, entry) => {
-      const article = entry.articles[0]
-      if (article) {
-        acc.push({ ...article, id: entry.id, type: "article" })
-        return acc
-      }
-      const external_link = entry.external_links[0]
-      if (external_link) {
-        acc.push({ ...external_link, id: entry.id, type: "external_link" })
-        return acc
-      }
-      return acc
-    },
-    [] as (
-      | ((typeof data)[number]["articles"][number] & {
-          type: "article"
-        })
-      | ((typeof data)[number]["external_links"][number] & {
-          type: "external_link"
-        })
-    )[],
-  )
-}
-
 const timelineQueryOptions = queryOptions({
   queryKey: ["timeline"],
   queryFn: async () => {
     const { data, error } = await fetchTimeline()
     if (error) return Promise.reject(error)
-
-    // NOTE: timeline 形式になるよう、各種データを結合しソートする
-    const result = transformTimeline(data).sort((a, b) =>
-      a.created_at > b.created_at ? -1 : 1,
-    )
-    console.log(result)
-    return result
+    console.log(data)
+    return data
   },
+  select: (data) => transformTimeline(data),
 })
+
+const transformTimeline = (
+  data: NonNullable<Awaited<ReturnType<typeof fetchTimeline>>["data"]>,
+) =>
+  data
+    .flatMap((entry) => {
+      const article = entry.articles[0]
+      if (article) {
+        return {
+          ...article,
+          id: entry.id,
+          articleId: article.id,
+          type: "article",
+        } as const
+      }
+      const external_link = entry.external_links[0]
+      if (external_link) {
+        return {
+          ...external_link,
+          id: entry.id,
+          externalLinkId: external_link.id,
+          type: "external_link",
+        } as const
+      }
+      return []
+    })
+    .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))

@@ -16,6 +16,7 @@ import { Route as rootRoute } from "./routes/__root"
 import { Route as TimelineIndexImport } from "./routes/timeline/index"
 import { Route as TagsIndexImport } from "./routes/tags/index"
 import { Route as PostsIndexImport } from "./routes/posts/index"
+import { Route as TagsTagIdImport } from "./routes/tags/$tagId"
 import { Route as PostsPostIdImport } from "./routes/posts/$postId"
 
 // Create Virtual Routes
@@ -50,6 +51,11 @@ const PostsIndexRoute = PostsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const TagsTagIdRoute = TagsTagIdImport.update({
+  path: "/tags/$tagId",
+  getParentRoute: () => rootRoute,
+} as any)
+
 const PostsPostIdRoute = PostsPostIdImport.update({
   path: "/posts/$postId",
   getParentRoute: () => rootRoute,
@@ -65,6 +71,10 @@ declare module "@tanstack/react-router" {
     }
     "/posts/$postId": {
       preLoaderRoute: typeof PostsPostIdImport
+      parentRoute: typeof rootRoute
+    }
+    "/tags/$tagId": {
+      preLoaderRoute: typeof TagsTagIdImport
       parentRoute: typeof rootRoute
     }
     "/posts/": {
@@ -91,6 +101,7 @@ declare module "@tanstack/react-router" {
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   PostsPostIdRoute,
+  TagsTagIdRoute,
   PostsIndexRoute,
   TagsIndexRoute,
   TimelineIndexRoute,
